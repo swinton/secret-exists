@@ -1880,16 +1880,15 @@ const secretExists = __webpack_require__(624);
 async function run() {
   try {
     const secret = core.getInput('secret-name');
-    const [ owner, repo ] = process.env.GITHUB_REPOSITORY.split('/');
-    const exists = await secretExists({ owner , repo, secret });
+    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+    const exists = await secretExists({ owner, repo, secret });
     core.setOutput('exists', exists ? 'true' : 'false');
-  }
-  catch (error) {
+  } catch (error) {
     core.setFailed(error.message);
   }
 }
 
-run()
+run();
 
 
 /***/ }),
@@ -5725,16 +5724,22 @@ module.exports = require("path");
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 const { Octokit } = __webpack_require__(889);
+
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN
 });
 
-async function secretExists({owner, repo, secret}) {
+async function secretExists({ owner, repo, secret }) {
   try {
-    const response = await octokit.request({
-      method: 'GET',
-      url: `https://api.github.com/repos/${ owner }/${ repo }/actions/secrets/${ secret }`
-    })
+    const response = await octokit.request(
+      {
+        method: 'GET',
+        url: `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secret}`
+      },
+      {
+        headers: { 'user-agent': 'swinton/secret-exists' }
+      }
+    );
     if (response.status === 200) {
       return true;
     }
@@ -5748,8 +5753,6 @@ async function secretExists({owner, repo, secret}) {
   return false;
 }
 module.exports = secretExists;
-
-if (false) {}
 
 
 /***/ }),
