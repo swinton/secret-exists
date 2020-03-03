@@ -1,19 +1,14 @@
 const core = require('@actions/core');
-const wait = require('./wait');
 
+const secretExists = require('./lib/secret-exists');
 
-// most @actions toolkit packages have async methods
 async function run() {
-  try { 
-    const ms = core.getInput('milliseconds');
-    console.log(`Waiting ${ms} milliseconds ...`)
-
-    core.debug((new Date()).toTimeString())
-    await wait(parseInt(ms));
-    core.debug((new Date()).toTimeString())
-
-    core.setOutput('time', new Date().toTimeString());
-  } 
+  try {
+    const secret = core.getInput('secret-name');
+    const [ owner, repo ] = process.env.GITHUB_REPOSITORY.split('/');
+    const exists = await secretExists({ owner , repo, secret });
+    core.setOutput('exists', exists ? 'true' : 'false');
+  }
   catch (error) {
     core.setFailed(error.message);
   }

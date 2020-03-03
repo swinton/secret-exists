@@ -1,13 +1,12 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Secret Exists'
+description: 'GitHub Action returning either true or false based on existence of a given secret'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  secret-name:  # id of input
+    description: 'name of secret to check existence of'
     required: true
-    default: '1000'
 outputs:
-  time: # output will be available to future steps 
-    description: 'The message to output'
+  exists: # output will be available to future steps
+    description: 'boolean representing the existence of the named secret'
 runs:
   using: 'node12'
   main: 'dist/index.js'
